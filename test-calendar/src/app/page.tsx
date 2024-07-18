@@ -1,17 +1,18 @@
 'use client'
 
-import { format, startOfWeek, getDay, addMinutes, startOfDay } from 'date-fns';
+import { format, startOfWeek, getDay, addMinutes, startOfDay, parse } from 'date-fns';
 import { nlBE, enUS, nl } from 'date-fns/locale';
 import Timezone from 'timezone-enum';
 import { toZonedTime } from 'date-fns-tz';
 import { Calendar, dateFnsLocalizer } from '../../../src/index';
 import withDragAndDrop from '../../../src/addons/dragAndDrop';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, useEffect, useState } from 'react';
 import { backgroundEvents, calendarSettings, calendarView, events, IBusinessOpeningHours, openingHours, selectedDate, selectedPersonnel } from './data';
 
 // run `yarn prepublishOnly` from react-big-calendar folder first
 import "../../../lib/addons/dragAndDrop/styles.css";
 import "../../../lib/css/react-big-calendar.css";
+import Modal from './modal';
 
 const locales = {
   'en-US': enUS,
@@ -71,9 +72,16 @@ function slotPropGetter(date: Date /* in browserTimeZone */, resourceId: number 
 }
 
 export default function Home() {
+  const [showModal, setShowModal] = useState(false);
+  const [counter, setcounter] = useState(1);
+  console.log('render', counter);
+  useEffect(() => {
+    setcounter(counter + 1);
+  },[]);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
+        <Modal showModal={showModal} setShowModal={setShowModal} />
         <DnDCalendar
           culture={calendarSettings.locale}
           localizer={localizer}
@@ -88,7 +96,7 @@ export default function Home() {
           //onEventDrop={resizeEvent}
           //onEventResize={resizeEvent}
           //onNavigate={onNavigate}
-          onSelectEvent={() => console.log('select')}
+          onSelectEvent={() => setShowModal(true)}
           //onSelectSlot={onSelectSlot}
           //onView={(view): void => onNavigate(selectedDate, view)}
 
